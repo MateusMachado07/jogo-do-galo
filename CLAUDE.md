@@ -20,3 +20,9 @@ All logic is in the `<script>` block of `index.html`:
 - The reset button reinitializes `board`/`currentPlayer`/`gameOver` and re-enables all cells.
 
 Since everything is in one file with no modules, changes to game logic, styling, and markup all happen in the same place — there is no separation to preserve across files.
+
+## Git / GitHub sync
+
+This repo is tracked in git and pushed to https://github.com/MateusMachado07/jogo-do-galo (`origin`, branch `master`).
+
+A project-scoped `PostToolUse` hook (`.claude/settings.json`, matcher `Write|Edit`) automatically runs `git add -A && git commit -m "Auto-commit: update files" && git push origin HEAD` after every file write/edit in this project. It no-ops cleanly if there is nothing to commit. This means every modification made via Claude Code in this directory is committed and pushed to GitHub automatically — no manual `git add`/`commit`/`push` step is needed or expected.
