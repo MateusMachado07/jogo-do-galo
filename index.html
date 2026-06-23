@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jogo do Galo</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: system-ui, sans-serif;
+    background: #1e1e2e;
+    color: #eee;
+    gap: 20px;
+  }
+  h1 { margin: 0; }
+  #status {
+    font-size: 1.2rem;
+    min-height: 1.5rem;
+  }
+  #board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+    gap: 8px;
+  }
+  .cell {
+    background: #2a2a3d;
+    border: none;
+    border-radius: 8px;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+  }
+  .cell:hover:not(:disabled) {
+    background: #3a3a55;
+  }
+  .cell:disabled {
+    cursor: default;
+  }
+  .cell.x { color: #61dafb; }
+  .cell.o { color: #ff7676; }
+  .cell.win {
+    background: #3d5a3d;
+  }
+  #reset {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    background: #61dafb;
+    color: #1e1e2e;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  #reset:hover { background: #4fc3e8; }
+</style>
+</head>
+<body>
+  <h1>Jogo do Galo</h1>
+  <div id="status">Vez de X</div>
+  <div id="board"></div>
+  <button id="reset">Recomeçar</button>
+
+  <script>
+    const boardEl = document.getElementById('board');
+    const statusEl = document.getElementById('status');
+    const resetBtn = document.getElementById('reset');
+
+    const WIN_LINES = [
+      [0,1,2],[3,4,5],[6,7,8],
+      [0,3,6],[1,4,7],[2,5,8],
+      [0,4,8],[2,4,6]
+    ];
+
+    let board = Array(9).fill(null);
+    let currentPlayer = 'X';
+    let gameOver = false;
+
+    const cells = [];
+    for (let i = 0; i < 9; i++) {
+      const btn = document.createElement('button');
+      btn.classList.add('cell');
+      btn.addEventListener('click', () => handleMove(i));
+      boardEl.appendChild(btn);
+      cells.push(btn);
+    }
+
+    function handleMove(index) {
+      if (gameOver || board[index]) return;
+
+      board[index] = currentPlayer;
+      render();
+
+      const winLine = checkWinner(currentPlayer);
+      if (winLine) {
+        statusEl.textContent = `${currentPlayer} venceu!`;
+        winLine.forEach(i => cells[i].classList.add('win'));
+        gameOver = true;
+        disableAll();
+        return;
+      }
+
+      if (board.every(c => c)) {
+        statusEl.textContent = 'Empate!';
+        gameOver = true;
+        return;
+      }
+
+      currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+      statusEl.textContent = `Vez de ${currentPlayer}`;
+    }
+
+    function checkWinner(player) {
+      return WIN_LINES.find(line => line.every(i => board[i] === player));
+    }
+
+    function disableAll() {
+      cells.forEach(c => c.disabled = true);
+    }
+
+    function render() {
+      cells.forEach((cell, i) => {
+        cell.textContent = board[i] || '';
+        cell.classList.remove('x', 'o');
+        if (board[i] === 'X') cell.classList.add('x');
+        if (board[i] === 'O') cell.classList.add('o');
+        cell.disabled = !!board[i];
+      });
+    }
+
+    resetBtn.addEventListener('click', () => {
+      board = Array(9).fill(null);
+      currentPlayer = 'X';
+      gameOver = false;
+      statusEl.textContent = 'Vez de X';
+      cells.forEach(c => {
+        c.disabled = false;
+        c.classList.remove('win');
+      });
+      render();
+    });
+  </script>
+</body>
+</html>
