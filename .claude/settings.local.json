@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mv /c/Users/mateu/tic-tac-toe/index.html \"/c/Users/mateu/OneDrive/Documents/ClaudeCodeTest/index.html\")",
+      "Bash(rmdir /c/Users/mateu/tic-tac-toe)",
+      "Bash(start *)",
+      "PowerShell(Invoke-Item *)",
+      "PowerShell(Start-Process \"msedge.exe\" -ArgumentList \"C:\\\\Users\\\\mateu\\\\OneDrive\\\\Documents\\\\ClaudeCodeTest\\\\index.html\")",
+      "PowerShell(Get-Process *)",
+      "PowerShell(Start-Process \"librewolf.exe\" -ArgumentList \"C:\\\\Users\\\\mateu\\\\OneDrive\\\\Documents\\\\ClaudeCodeTest\\\\index.html\")",
+      "PowerShell($paths = @\\(\"$env:ProgramFiles\\\\LibreWolf\\\\librewolf.exe\", \"${env:ProgramFiles\\(x86\\)}\\\\LibreWolf\\\\librewolf.exe\", \"$env:LOCALAPPDATA\\\\LibreWolf\\\\librewolf.exe\"\\); foreach \\($p in $paths\\) { Test-Path $p })",
+      "PowerShell(Start-Process \"$env:ProgramFiles\\\\LibreWolf\\\\librewolf.exe\" -ArgumentList \"C:\\\\Users\\\\mateu\\\\OneDrive\\\\Documents\\\\ClaudeCodeTest\\\\index.html\")",
+      "PowerShell(Get-Command *)",
+      "PowerShell(Start-Process \"C:\\\\Program Files\\\\LibreWolf\\\\librewolf.exe\" -ArgumentList \\(Resolve-Path \"index.html\"\\).Path)",
+      "PowerShell(Start-Process \"LibreWolf\" -ArgumentList \\(Resolve-Path \".\\\\index.html\"\\).Path)",
+      "PowerShell($paths = @\\(\"$env:ProgramFiles\\\\LibreWolf\\\\librewolf.exe\",\"${env:ProgramFiles\\(x86\\)}\\\\LibreWolf\\\\librewolf.exe\",\"$env:LOCALAPPDATA\\\\LibreWolf\\\\librewolf.exe\"\\); $paths | ForEach-Object { Test-Path $_ })",
+      "PowerShell(Start-Process \"$env:ProgramFiles\\\\LibreWolf\\\\librewolf.exe\" -ArgumentList \\(Resolve-Path \".\\\\index.html\"\\).Path)",
+      "Bash(gh auth *)",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(gh repo *)",
+      "Skill(update-config)",
+      "Bash(bash -c 'git -C \"C:/Users/mateu/OneDrive/Documents/ClaudeCodeTest\" add -A && \\(git -C \"C:/Users/mateu/OneDrive/Documents/ClaudeCodeTest\" diff --cached --quiet || \\(git -C \"C:/Users/mateu/OneDrive/Documents/ClaudeCodeTest\" commit -m \"Auto-commit: update files\" && git -C \"C:/Users/mateu/OneDrive/Documents/ClaudeCodeTest\" push origin HEAD\\)\\)')",
+      "Bash(echo \"EXIT: $?\")"
+    ]
+  }
+}
