@@ -90,6 +90,7 @@
     const boardEl = document.getElementById('board');
     const statusEl = document.getElementById('status');
     const resetBtn = document.getElementById('reset');
+    const difficultySelect = document.getElementById('difficulty');
 
     const WIN_LINES = [
       [0,1,2],[3,4,5],[6,7,8],
@@ -100,6 +101,8 @@
     let board = Array(9).fill(null);
     let currentPlayer = 'X';
     let gameOver = false;
+    let humanSymbol = 'X';
+    let botSymbol = 'O';
 
     const cells = [];
     for (let i = 0; i < 9; i++) {
@@ -111,36 +114,99 @@
     }
 
     function handleMove(index) {
-      if (gameOver || board[index]) return;
+      if (gameOver || board[index] || currentPlayer !== humanSymbol) return;
+      makeMove(index);
+    }
 
+    function makeMove(index) {
       board[index] = currentPlayer;
-      render();
 
-      const winLine = checkWinner(currentPlayer);
+      const winLine = getWinningLine(board, currentPlayer);
       if (winLine) {
-        statusEl.textContent = `${currentPlayer} venceu!`;
-        winLine.forEach(i => cells[i].classList.add('win'));
         gameOver = true;
-        disableAll();
+        render();
+        winLine.forEach(i => cells[i].classList.add('win'));
+        statusEl.textContent = currentPlayer === humanSymbol ? 'Ganhaste!' : 'O bot venceu!';
         return;
       }
 
       if (board.every(c => c)) {
-        statusEl.textContent = 'Empate!';
         gameOver = true;
+        render();
+        statusEl.textContent = 'Empate!';
         return;
       }
 
       currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-      statusEl.textContent = `Vez de ${currentPlayer}`;
+      render();
+      updateStatus();
+      maybeBotMove();
     }
 
-    function checkWinner(player) {
-      return WIN_LINES.find(line => line.every(i => board[i] === player));
+    function getWinningLine(b, player) {
+      return WIN_LINES.find(line => line.every(i => b[i] === player));
     }
 
-    function disableAll() {
-      cells.forEach(c => c.disabled = true);
+    function emptyIndices(b) {
+      return b.reduce((acc, c, i) => c ? acc : [...acc, i], []);
+    }
+
+    function updateStatus() {
+      statusEl.textContent = currentPlayer === humanSymbol
+        ? `Jogas com ${humanSymbol} — a tua vez`
+        : `Jogas com ${humanSymbol} — vez do bot`;
+    }
+
+    function maybeBotMove() {
+      if (gameOver || currentPlayer !== botSymbol) return;
+      setTimeout(() => {
+        const index = getBotMove(difficultySelect.value);
+        makeMove(index);
+      }, 400);
+    }
+
+    function getBotMove(difficulty) {
+      const empty = emptyIndices(board);
+
+      if (difficulty === 'facil') {
+        return empty[Math.floor(Math.random() * empty.length)];
+      }
+
+      if (difficulty === 'medio') {
+        const winMove = findWinningMove(board, botSymbol);
+        if (winMove !== undefined) return winMove;
+        const blockMove = findWinningMove(board, humanSymbol);
+        if (blockMove !== undefined) return blockMove;
+        return empty[Math.floor(Math.random() * empty.length)];
+      }
+
+      return minimax(board, botSymbol).index;
+    }
+
+    function findWinningMove(b, player) {
+      return emptyIndices(b).find(i => {
+        const copy = b.slice();
+        copy[i] = player;
+        return getWinningLine(copy, player);
+      });
+    }
+
+    function minimax(b, player) {
+      if (getWinningLine(b, botSymbol)) return { score: 10 };
+      if (getWinningLine(b, humanSymbol)) return { score: -10 };
+      const empty = emptyIndices(b);
+      if (empty.length === 0) return { score: 0 };
+
+      const moves = empty.map(i => {
+        const copy = b.slice();
+        copy[i] = player;
+        const result = minimax(copy, player === botSymbol ? humanSymbol : botSymbol);
+        return { index: i, score: result.score };
+      });
+
+      return player === botSymbol
+        ? moves.reduce((best, m) => m.score > best.score ? m : best)
+        : moves.reduce((best, m) => m.score < best.score ? m : best);
     }
 
     function render() {
@@ -149,21 +215,25 @@
         cell.classList.remove('x', 'o');
         if (board[i] === 'X') cell.classList.add('x');
         if (board[i] === 'O') cell.classList.add('o');
-        cell.disabled = !!board[i];
+        cell.disabled = !!board[i] || gameOver || currentPlayer !== humanSymbol;
       });
     }
 
-    resetBtn.addEventListener('click', () => {
+    function startGame() {
       board = Array(9).fill(null);
       currentPlayer = 'X';
       gameOver = false;
-      statusEl.textContent = 'Vez de X';
-      cells.forEach(c => {
-        c.disabled = false;
-        c.classList.remove('win');
-      });
+      humanSymbol = Math.random() < 0.5 ? 'X' : 'O';
+      botSymbol = humanSymbol === 'X' ? 'O' : 'X';
+      cells.forEach(c => c.classList.remove('win'));
       render();
-    });
+      updateStatus();
+      maybeBotMove();
+    }
+
+    resetBtn.addEventListener('click', startGame);
+
+    startGame();
   </script>
 </body>
 </html>
