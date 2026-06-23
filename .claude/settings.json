@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "git -C \"C:/Users/mateu/OneDrive/Documents/ClaudeCodeTest\" add -A && (git -C \"C:/Users/mateu/OneDrive/Documents/ClaudeCodeTest\" diff --cached --quiet || (git -C \"C:/Users/mateu/OneDrive/Documents/ClaudeCodeTest\" commit -m \"Auto-commit: update files\" && git -C \"C:/Users/mateu/OneDrive/Documents/ClaudeCodeTest\" push origin HEAD)) || true",
+            "timeout": 30,
+            "statusMessage": "Auto-commit + push to GitHub..."
+          }
+        ]
+      }
+    ]
+  }
+}
